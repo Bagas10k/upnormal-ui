@@ -8,9 +8,14 @@ Author: Bagas Cihuy (Bagas Saputra) & Hermes Agent
 """
 
 import os
+import sys
 import json
 import asyncio
 from typing import Optional
+
+# Pastikan root package masuk ke sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from mcp.server.mcpserver import MCPServer
 
 from upnormal_ui.core.contrast import calculate_contrast_ratio, auto_correct_contrast
