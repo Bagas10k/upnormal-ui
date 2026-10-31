@@ -103,6 +103,22 @@ class TestUpnormalUIEnterprise(unittest.TestCase):
         btn_react = render_button("SUBMIT", variant="spatial_glass", framework="react")
         self.assertIn("export function UpnormalButton", btn_react)
 
+        # 4. Vue Component
+        btn_vue = render_button("SIMPAN VUE", variant="obsidian_sleek", framework="vue")
+        self.assertIn("<script setup>", btn_vue)
+        self.assertIn("defineProps", btn_vue)
+        self.assertIn("<template>", btn_vue)
+
+        # 5. Svelte Component
+        btn_svelte = render_button("KIRIM SVELTE", variant="neo_brutal", framework="svelte")
+        self.assertIn("$props()", btn_svelte)
+        self.assertIn("restProps", btn_svelte)
+
+        # 6. Alpine Component
+        btn_alpine = render_button("KLIK ALPINE", variant="pill_soft", framework="alpine")
+        self.assertIn("x-data", btn_alpine)
+        self.assertIn("$dispatch('upnormal-click'", btn_alpine)
+
     def test_card_bento_and_dialog_components(self):
         # Asymmetric Bento Grid
         cells = [

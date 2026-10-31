@@ -156,7 +156,7 @@ def upnormal_render_button(
     - 'obsidian_sleek': Dark obsidian, hairline border, accent hover glow.
     - 'spatial_glass': Frosted glass, white/15 rim, progressive hover.
     - 'pill_soft': Rounded-full, playful soft spring.
-    Framework: 'html', 'blade', atau 'react'.
+    Framework: 'html', 'blade', 'react', 'vue', 'svelte', atau 'alpine'.
     """
     try:
         return render_button(

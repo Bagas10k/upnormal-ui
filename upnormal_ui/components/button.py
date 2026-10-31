@@ -127,6 +127,72 @@ def render_button(
         )
         return react_snippet
 
+    elif framework == "vue":
+        return f"""<!-- Vue 3 Component: UpnormalButton.vue -->
+<script setup>
+defineProps({{
+  label: {{
+    type: String,
+    default: '{label}'
+  }},
+  customClass: {{
+    type: String,
+    default: ''
+  }}
+}});
+defineEmits(['click']);
+</script>
+
+<template>
+  <button
+    type="button"
+    :class="['{combined_class}', customClass]"
+    @click="$emit('click', $event)"
+    v-bind="$attrs"
+  >
+    {icon_markup}
+    <span><slot>{{{{ label }}}}</slot></span>
+  </button>
+</template>"""
+
+    elif framework == "svelte":
+        return f"""<!-- Svelte 5 Component: UpnormalButton.svelte -->
+<script>
+  let {{ children, onclick, class: customClass = '', ...restProps }} = $props();
+</script>
+
+<button
+  type="button"
+  class="{combined_class} {{customClass}}"
+  {{onclick}}
+  {{...restProps}}
+>
+  {icon_markup}
+  <span>
+    {{#if children}}
+      {{@render children()}}
+    {{else}}
+      {label}
+    {{/if}}
+  </span>
+</button>"""
+
+    elif framework == "alpine":
+        return f"""<!-- Alpine.js Component: UpnormalButton -->
+<button
+  type="button"
+  x-data="{{
+    handleClick(e) {{
+      this.$dispatch('upnormal-click', {{ label: '{label}' }});
+    }}
+  }}"
+  @click="handleClick($event)"
+  class="{combined_class}"
+>
+  {icon_markup}
+  <span>{label}</span>
+</button>"""
+
     else: # HTML / Tailwind
         return f"""<!-- UPNORMAL BUTTON: {v_data['name']} ({size.upper()}) -->
 <button type="button" class="{combined_class}">

@@ -53,7 +53,7 @@ def main():
     btn_parser.add_argument("label", nargs="?", default="TINDAKAN ➔")
     btn_parser.add_argument("--variant", default="neo_brutal", choices=["neo_brutal", "swiss_editorial", "obsidian_sleek", "spatial_glass", "pill_soft"])
     btn_parser.add_argument("--size", default="md", choices=["sm", "md", "lg"])
-    btn_parser.add_argument("--framework", default="html", choices=["html", "blade", "react"])
+    btn_parser.add_argument("--framework", default="html", choices=["html", "blade", "react", "vue", "svelte", "alpine"])
     btn_parser.add_argument("--accent", action="store_true", help="Gunakan warna aksen")
 
     # Command: playground
