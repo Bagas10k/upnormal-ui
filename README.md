@@ -70,32 +70,42 @@ Atau daftarkan secara manual ke `claude_desktop_config.json` / `~/.hermes/config
 ```
 
 ### 2. Menjalankan via CLI Mandiri
-Paket ini memiliki antarmuka baris perintah (*CLI*) bawaan:
+Paket ini memiliki antarmuka baris perintah (*CLI*) profesional bawaan:
 
 ```bash
-# 1. Audit kode UI terhadap Dosa AI Slop
+# 1. Audit DOM struktur terhadap 9 Dosa AI Slop
 python3 -m upnormal_ui.cli audit ./resources/views/dashboard.blade.php
 
-# 2. Transmutasi otomatis kode template ke Neo-Brutalist
+# 2. Transmutasi DOM otomatis ke Neo-Brutalist / Swiss Noir
 python3 -m upnormal_ui.cli transmute ./components/card.html --archetype neo_brutalist -o ./components/upnormal_card.html
 
-# 3. Generate token palet 95:5 (CSS variables & Tailwind)
-python3 -m upnormal_ui.cli palette --stage obsidian --accent "#06b6d4"
+# 3. Generate skala warna perseptual 11-langkah (50-950)
+python3 -m upnormal_ui.cli scale "#06b6d4" --name cyan
+
+# 4. Generate komponen tombol modular (HTML / Blade / React)
+python3 -m upnormal_ui.cli button "SIMPAN TRANSAKSI" --variant neo_brutal --size lg --framework blade
+
+# 5. Generate seluruh Interactive Component Playground ke HTML
+python3 -m upnormal_ui.cli playground -o playground.html
 ```
 
 ---
 
-## 🛠️ Daftar Perkakas MCP (Tool Catalog)
+## 🛠️ Daftar 11 Perkakas MCP (Tool Catalog)
 
 | Nama Tool | Parameter | Deskripsi & Luaran |
 |:---|:---|:---|
 | **`upnormal_audit_contrast`** | `hex_fg`, `hex_bg`, `target_ratio` | Menghitung rasio kontras. Jika gagal (< 7:1), otomatis melakukan perbaikan warna (*auto-correction*) pada kanal Lightness HSL. |
-| **`upnormal_scan_anti_slop`** | `code` | Memindai kode terhadap 8 Dosa AI Slop (gradien ungu-cyan, tombol ber-emoji, bayangan difus kusam, dll). Menghasilkan skor 0-100. |
-| **`upnormal_transmute_ui`** | `code`, `target_archetype`, `accent_color` | [DUAL ENGINE] Mentransformasikan template generik menjadi karya seni Upnormal berkelas. |
-| **`upnormal_palette_generator`**| `stage`, `accent` | Hasilkan palet panggung 95% akromatik + 5% aksen tunggal (CSS variables, token DESIGN.md, Tailwind config). |
+| **`upnormal_generate_color_scale`** | `accent_hex`, `name` | Menghasilkan skala warna perseptual 11-langkah (50–950) lengkap dengan warna teks kontras WCAG AAA. |
+| **`upnormal_scan_anti_slop`** | `code` | [DOM-AWARE LINTER] Memindai kode terhadap 9 Dosa AI Slop (BeautifulSoup4 AST linter). |
+| **`upnormal_transmute_ui`** | `code`, `target_archetype`, `accent_color` | [DOM TRANSMUTATION] Merombak struktur DOM template generik menjadi karya seni Upnormal berkelas. |
+| **`upnormal_palette_generator`**| `stage`, `accent` | Hasilkan palet panggung 95% akromatik + 5% aksen tunggal (CSS variables & Tailwind). |
+| **`upnormal_render_button`** | `label`, `variant`, `size`, `framework` | [BUTTON FACTORY] Hasilkan komponen tombol modular untuk HTML, Blade, atau React. |
+| **`upnormal_render_bento_grid`**| `cells_json`, `archetype` | [BENTO FACTORY] Hasilkan komposisi bento grid asimetris berbobot 2:1. |
+| **`upnormal_get_morph_dialog`** | `trigger_label`, `dialog_title`, `dialog_content` | [60 FPS MODAL] Sasis dialog modal in-place morphing tanpa jeda kedip (*CLS = 0*). |
 | **`upnormal_get_archetype`** | `archetype_name`, `component_type` | Hasilkan sasis komponen siap pakai dari 5 arketipe dunia (*swiss_editorial*, *neo_brutalist*, dll). |
-| **`upnormal_get_chassis`** | `chassis_type` | Ambil sasis spesifik: tabel data padat kasir (*financial_table*), custom select (*custom_select*), atau toggle switch taktil. |
-| **`upnormal_get_morph_engine`** | `technique` | Ambil boilerplate JavaScript & CSS untuk morphing in-place 60 FPS (GSAP FLIP atau WAAPI). |
+| **`upnormal_get_chassis`** | `chassis_type` | Ambil sasis spesifik: tabel kasir padat (*financial_table*), custom select, atau toggle switch. |
+| **`upnormal_generate_playground_html`** | *none* | Hasilkan dokumen HTML Interactive Playground lengkap untuk pengujian visual di browser. |
 
 ---
 
@@ -109,9 +119,9 @@ python3 tests/test_all.py
 
 Output:
 ```text
-.....
+......
 ----------------------------------------------------------------------
-Ran 5 tests in 0.003s
+Ran 6 tests in 0.014s
 
 OK
 ```
