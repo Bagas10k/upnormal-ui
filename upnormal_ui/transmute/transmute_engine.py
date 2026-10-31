@@ -75,6 +75,11 @@ def transmute_code(code: str, target_archetype: str = "neo_brutalist", accent_co
         transmuted = transmuted.replace('class="', 'class="up-morph-target ', 1)
         changes.append("Menyematkan utility class 'up-morph-target' untuk memastikan transisi mengikuti kurva spring 60 FPS.")
 
+    # 7. Musnahkan kicker badge clutter & floating bragging pills
+    if re.search(r'<div[^>]*class=["\'][^"\']*(?:hero-pill|hero-badges-strip)[^"\']*[\s\S]*?<\/div>', transmuted, re.IGNORECASE):
+        transmuted = re.sub(r'<div[^>]*class=["\'][^"\']*(?:hero-pill|hero-badges-strip)[^"\']*[\s\S]*?<\/div>\s*', '', transmuted, flags=re.IGNORECASE)
+        changes.append("Memusnahkan kicker badge clutter dan floating tech-bragging pills yang mengotori panggung.")
+
     final_audit = scan_anti_slop(transmuted)
 
     return {

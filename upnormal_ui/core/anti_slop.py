@@ -73,6 +73,14 @@ PATTERNS = [
         "severity": "MEDIUM",
         "description": "Dialog yang muncul tiba-tiba tanpa transisi morphing memutus alur pandang pengguna (*visual cognitive jump*).",
         "solution": "Terapkan In-Place Morphing (GSAP FLIP atau spring cubic-bezier) di mana tombol pemanggil mengembang menjadi dialog."
+    },
+    {
+        "id": "SLOP_09_ORNAMENTAL_KICKER_BADGE_CLUTTER",
+        "name": "Badge Clutter & Kicker Pill Pamer Teknis",
+        "regex": re.compile(r"(?:class=[\"'][^\"']*(?:hero-pill|badge-tag|hero-badges-strip)[^\"']*|(?:\b(?:Zero\s*AI-Slop|WCAG\s*AAA\s*\(?≥?\s*7:1\)?|60\s*FPS\s*In-Place|PORTOFOLIO\s*RESMI\s*VOL)[^<]*<\/span>))", re.IGNORECASE),
+        "severity": "CRITICAL",
+        "description": "Kicker badge mengambang dan deretan tag pamer teknis (seperti 'Zero AI-Slop', 'WCAG AAA', '60 FPS') adalah polusi visual AI yang murahan dan menjijikkan.",
+        "solution": "Hapus total badge clutter ornamental. Biarkan tipografi bersih, ruang lega, dan kualitas layout yang berbicara."
     }
 ]
 

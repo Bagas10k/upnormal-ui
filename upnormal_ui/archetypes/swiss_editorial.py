@@ -40,13 +40,10 @@ def render_swiss_hero(title: str, subtitle: str, cta_text: str = "JELAJAHI SISTE
     return f"""<!-- UPNORMAL CHASSIS: Swiss Editorial Brutalism Hero -->
 <section class="relative bg-[#fafaf9] text-[#0c0a09] border-b-2 border-[#0c0a09] px-6 py-20 lg:py-28 font-['Plus_Jakarta_Sans',sans-serif] overflow-hidden">
   <div class="max-w-7xl mx-auto">
-    <!-- Top Meta Strip -->
-    <div class="flex flex-wrap items-center justify-between border-b border-[#0c0a09] pb-4 mb-12 text-xs font-['JetBrains_Mono',monospace] font-bold tracking-wider uppercase text-[#57534e]">
-      <span class="flex items-center gap-2">
-        <span class="w-2 h-2 bg-[#ef4444]"></span>
-        EDISI DOKTRIN 2026 // KONTRAK VISUAL RESMI
-      </span>
-      <span>01 / 05 — MANIFESTO ARSITEKTUR</span>
+    <!-- Top Meta Line -->
+    <div class="flex flex-wrap items-center justify-between border-b border-[#0c0a09] pb-4 mb-12 text-xs font-['JetBrains_Mono',monospace] font-semibold text-[#57534e]">
+      <span>Arsitektur & Rekayasa Antarmuka</span>
+      <span>Karya Terkurasi 2026</span>
     </div>
 
     <!-- Massive Asymmetrical Headline -->
@@ -66,19 +63,19 @@ def render_swiss_hero(title: str, subtitle: str, cta_text: str = "JELAJAHI SISTE
       </div>
     </div>
 
-    <!-- Numbered Metric Ticker -->
+    <!-- Metric Ticker -->
     <div class="grid grid-cols-1 sm:grid-cols-3 border-t-2 border-[#0c0a09] pt-6 gap-6 font-['JetBrains_Mono',monospace]">
       <div class="border-r border-[#0c0a09]/20 pr-4">
-        <span class="text-xs text-[#57534e] block mb-1">01. RATIO</span>
-        <span class="text-2xl font-black text-[#0c0a09]">95% : 5%</span>
+        <span class="text-xs text-[#57534e] block mb-1">01. PRINSIP</span>
+        <span class="text-xl font-black text-[#0c0a09]">Bebas & Berseni</span>
       </div>
       <div class="border-r border-[#0c0a09]/20 pr-4">
-        <span class="text-xs text-[#57534e] block mb-1">02. CONTRAST</span>
-        <span class="text-2xl font-black text-[#ef4444]">WCAG AAA (≥7:1)</span>
+        <span class="text-xs text-[#57534e] block mb-1">02. FUNGSI</span>
+        <span class="text-xl font-black text-[#ef4444]">Kokoh di Runtime</span>
       </div>
       <div>
-        <span class="text-xs text-[#57534e] block mb-1">03. REFRESH RATE</span>
-        <span class="text-2xl font-black text-[#0c0a09]">60 FPS CONTINUOUS</span>
+        <span class="text-xs text-[#57534e] block mb-1">03. PRIVASI</span>
+        <span class="text-xl font-black text-[#0c0a09]">100% Mandiri</span>
       </div>
     </div>
   </div>

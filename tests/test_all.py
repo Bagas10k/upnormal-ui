@@ -58,15 +58,19 @@ class TestUpnormalUI(unittest.TestCase):
 
     def test_transmute_engine(self):
         slop_code = """
+        <div class="hero-pill"><span>INDONESIA // VOL. 02</span></div>
         <button class="bg-gradient-to-r from-purple-500 to-cyan-500 shadow-2xl">
           DAPATKAN SEKARANG 🚀
         </button>
+        <div class="hero-badges-strip"><div class="badge-tag"><span>100% Zero AI-Slop</span></div></div>
         """
         res = transmute_code(slop_code, target_archetype="neo_brutalist")
         self.assertEqual(res["status"], "SUCCESS")
         self.assertTrue(res["transmuted_score"] > res["initial_score"])
         self.assertNotIn("from-purple-500", res["transmuted_code"])
         self.assertNotIn("🚀", res["transmuted_code"])
+        self.assertNotIn("hero-pill", res["transmuted_code"])
+        self.assertNotIn("hero-badges-strip", res["transmuted_code"])
 
     def test_archetypes_and_chassis_render(self):
         swiss = render_swiss_hero("JUDUL", "SUBTITLE")
