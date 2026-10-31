@@ -9,6 +9,9 @@ untuk menguji rasa sentuh (*feel*), animasi morphing, dan kontras optik komponen
 from upnormal_ui.components.button import render_button
 from upnormal_ui.components.card import render_bento_grid, render_metric_card
 from upnormal_ui.components.dialog import render_morphing_dialog
+from upnormal_ui.components.badge import render_badge
+from upnormal_ui.components.dropdown import render_dropdown_menu
+from upnormal_ui.components.navbar import render_navbar
 from upnormal_ui.chassis.tables import render_high_density_table
 from upnormal_ui.chassis.inputs import render_custom_select, render_tactile_toggle
 from upnormal_ui.archetypes.swiss_editorial import render_swiss_hero
@@ -43,6 +46,19 @@ def generate_interactive_playground_html() -> str:
     select_sample = render_custom_select("PILIH KATEGORI PRODUK", ["Semen & Mortar", "Besi Beton & Wiremesh", "Cat & Pelapis Tembok", "Pipa & Sanitari"])
     toggle_sample = render_tactile_toggle("AKTIFKAN VERIFIKASI DUAL-ENTRY AUTO-LOCK", is_active=True)
 
+    # 6. Render Badges, Dropdown & Navbar
+    badges_sample = f"""
+    <div class="flex flex-wrap gap-3 items-center">
+      {render_badge('live')}
+      {render_badge('pending')}
+      {render_badge('closed')}
+      {render_badge('alert')}
+      {render_badge('info')}
+    </div>
+    """
+    dropdown_sample = render_dropdown_menu()
+    navbar_sample = render_navbar(brand_text="upnormal", brand_dot_color="#38bdf8")
+
     return f"""<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -65,7 +81,12 @@ def generate_interactive_playground_html() -> str:
   }}
 </style>
 </head>
-<body class="p-6 md:p-12 max-w-7xl mx-auto space-y-16">
+<body class="bg-[#06090e] text-[#f8fafc]">
+
+  <!-- Top Sticky Navbar Component -->
+  {navbar_sample}
+
+  <div class="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl mx-auto space-y-12 sm:space-y-16 lg:space-y-20">
 
   <!-- Header -->
   <header class="border-b border-[#1e293b] pb-8 flex flex-wrap items-center justify-between gap-4">
@@ -86,11 +107,11 @@ def generate_interactive_playground_html() -> str:
 
   <!-- 1. Varian Tombol Modular -->
   <section class="space-y-4">
-    <div class="border-b border-[#1e293b] pb-2 flex items-center justify-between">
+    <div class="border-b border-[#1e293b] pb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold uppercase tracking-wider text-[#38bdf8] font-['JetBrains_Mono',monospace]">01 // MODULAR BUTTON SHOWCASE</h2>
       <span class="text-xs text-[#64748b]">5 Arketipe Visual</span>
     </div>
-    <div class="p-8 rounded-2xl bg-[#090e17] border border-[#1e293b] flex flex-wrap gap-4 items-center">
+    <div class="p-5 sm:p-6 lg:p-8 rounded-2xl bg-[#090e17] border border-[#1e293b] flex flex-wrap gap-4 items-center">
       {btn_neo}
       {btn_swiss}
       {btn_obsidian}
@@ -101,7 +122,7 @@ def generate_interactive_playground_html() -> str:
 
   <!-- 2. Asymmetric Bento Grid -->
   <section class="space-y-4">
-    <div class="border-b border-[#1e293b] pb-2 flex items-center justify-between">
+    <div class="border-b border-[#1e293b] pb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold uppercase tracking-wider text-[#38bdf8] font-['JetBrains_Mono',monospace]">02 // ASYMMETRIC BENTO GRID</h2>
       <span class="text-xs text-[#64748b]">Hierarki 3-Kolom Berbobot 2:1</span>
     </div>
@@ -110,18 +131,18 @@ def generate_interactive_playground_html() -> str:
 
   <!-- 3. In-Place Morphing Dialog -->
   <section class="space-y-4">
-    <div class="border-b border-[#1e293b] pb-2 flex items-center justify-between">
+    <div class="border-b border-[#1e293b] pb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold uppercase tracking-wider text-[#38bdf8] font-['JetBrains_Mono',monospace]">03 // IN-PLACE MORPHING DIALOG</h2>
       <span class="text-xs text-[#64748b]">Fisika Spring 60 FPS (No-Blink SPA)</span>
     </div>
-    <div class="p-8 rounded-2xl bg-[#090e17] border border-[#1e293b]">
+    <div class="p-5 sm:p-6 lg:p-8 rounded-2xl bg-[#090e17] border border-[#1e293b]">
       {dialog_sample}
     </div>
   </section>
 
   <!-- 4. High-Density Financial Data Table -->
   <section class="space-y-4">
-    <div class="border-b border-[#1e293b] pb-2 flex items-center justify-between">
+    <div class="border-b border-[#1e293b] pb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold uppercase tracking-wider text-[#38bdf8] font-['JetBrains_Mono',monospace]">04 // HIGH-DENSITY FINANCIAL DATA TABLE</h2>
       <span class="text-xs text-[#64748b]">Angka Tabular Monospace & Sticky Header</span>
     </div>
@@ -130,16 +151,36 @@ def generate_interactive_playground_html() -> str:
 
   <!-- 5. Anti-Native Custom Controls -->
   <section class="space-y-4">
-    <div class="border-b border-[#1e293b] pb-2 flex items-center justify-between">
+    <div class="border-b border-[#1e293b] pb-3 flex items-center justify-between">
       <h2 class="text-sm font-bold uppercase tracking-wider text-[#38bdf8] font-['JetBrains_Mono',monospace]">05 // ANTI-NATIVE CUSTOM CONTROLS</h2>
       <span class="text-xs text-[#64748b]">Custom Select & Spring Switch</span>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-2xl bg-[#090e17] border border-[#1e293b]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 sm:p-6 lg:p-8 rounded-2xl bg-[#090e17] border border-[#1e293b]">
       <div>
         {select_sample}
       </div>
-      <div class="flex items-center pt-6">
-        {toggle_sample}
+      <div class="flex flex-col justify-end">
+        <label class="block text-xs font-bold uppercase tracking-wider text-[#94a3b8] mb-2 font-['JetBrains_Mono',monospace]">
+          STATUS VERIFIKASI
+        </label>
+        <div class="py-2">
+          {toggle_sample}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Functional Status Badges & Action Dropdowns -->
+  <section class="space-y-4">
+    <div class="border-b border-[#1e293b] pb-3 flex items-center justify-between">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-[#38bdf8] font-['JetBrains_Mono',monospace]">06 // FUNCTIONAL STATUS BADGES & ACTION MENUS</h2>
+      <span class="text-xs text-[#64748b]">Operational Beacons & Spring Dropdowns</span>
+    </div>
+    <div class="p-5 sm:p-6 lg:p-8 rounded-2xl bg-[#090e17] border border-[#1e293b] flex flex-wrap items-center justify-between gap-6">
+      {badges_sample}
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-[#94a3b8] font-semibold">Tindakan Cepat:</span>
+        {dropdown_sample}
       </div>
     </div>
   </section>
@@ -149,6 +190,7 @@ def generate_interactive_playground_html() -> str:
     © 2026 BAGAS SAPUTRA (BAGAS CIHUY) • UPNORMAL UI ENGINE • BEBAS AI SLOP
   </footer>
 
+  </div>
 </body>
 </html>
 """

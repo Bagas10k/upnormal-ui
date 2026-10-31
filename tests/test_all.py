@@ -11,12 +11,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from upnormal_ui.core.contrast import calculate_contrast_ratio, auto_correct_contrast
 from upnormal_ui.core.color_scale import generate_11_step_scale
+from upnormal_ui.core.spacing import get_spacing_system, audit_spacing_classes
 from upnormal_ui.core.ast_linter import lint_dom_structure
 from upnormal_ui.core.palette import generate_upnormal_palette
 from upnormal_ui.transmute.ast_transmute import transmute_dom_tree
 from upnormal_ui.components.button import render_button
 from upnormal_ui.components.card import render_bento_grid, render_metric_card
 from upnormal_ui.components.dialog import render_morphing_dialog
+from upnormal_ui.components.badge import render_badge
+from upnormal_ui.components.dropdown import render_dropdown_menu
+from upnormal_ui.components.navbar import render_navbar
 from upnormal_ui.components.playground import generate_interactive_playground_html
 from upnormal_ui.archetypes.swiss_editorial import render_swiss_hero
 from upnormal_ui.archetypes.neo_brutalist import render_neo_card
@@ -114,6 +118,36 @@ class TestUpnormalUIEnterprise(unittest.TestCase):
         self.assertIn("up-morph-trigger", dialog_html)
         self.assertIn("up-morph-surface", dialog_html)
         self.assertIn("backdrop-blur-md", dialog_html)
+
+    def test_badges_dropdown_and_navbar(self):
+        # 1. Badge test
+        badge = render_badge("live")
+        self.assertIn("LIVE", badge)
+        self.assertIn("animate-ping", badge)
+
+        # 2. Dropdown test
+        dropdown = render_dropdown_menu()
+        self.assertIn("data-up-dropdown", dropdown)
+        self.assertIn("data-up-dropdown-trigger", dropdown)
+
+        # 3. Navbar test
+        navbar = render_navbar(brand_text="cihuy", brand_dot_color="#10b981")
+        self.assertIn("cihuy", navbar)
+        self.assertIn("animate-pulse", navbar)
+
+    def test_spacing_intelligence(self):
+        # 1. Spacing scale tokens
+        sys_standard = get_spacing_system("standard")
+        self.assertEqual(sys_standard["density_mode"], "standard")
+        self.assertIn("--space-4: 1rem", sys_standard["css_variables"])
+
+        # 2. Spacing audit detects oversized mobile padding
+        bad_spacing = '<div class="p-8 m-[17px] pt-6 toggle">Konten</div>'
+        audit = audit_spacing_classes(bad_spacing)
+        self.assertEqual(audit["status"], "SPACING_ISSUES_DETECTED")
+        types = [i["type"] for i in audit["issues"]]
+        self.assertIn("OVERSIZED_MOBILE_PADDING", types)
+        self.assertIn("ARBITRARY_NON_SCALE_SPACING", types)
 
     def test_interactive_playground_generator(self):
         playground = generate_interactive_playground_html()

@@ -20,6 +20,7 @@ from mcp.server.mcpserver import MCPServer
 
 from upnormal_ui.core.contrast import calculate_contrast_ratio, auto_correct_contrast
 from upnormal_ui.core.color_scale import generate_11_step_scale
+from upnormal_ui.core.spacing import get_spacing_system, audit_spacing_classes
 from upnormal_ui.core.ast_linter import lint_dom_structure
 from upnormal_ui.core.anti_slop import scan_anti_slop
 from upnormal_ui.core.palette import generate_upnormal_palette
@@ -33,6 +34,9 @@ from upnormal_ui.archetypes.spatial_glass import get_spatial_glass_spec, render_
 from upnormal_ui.components.button import render_button
 from upnormal_ui.components.card import render_bento_grid, render_metric_card
 from upnormal_ui.components.dialog import render_morphing_dialog
+from upnormal_ui.components.badge import render_badge
+from upnormal_ui.components.dropdown import render_dropdown_menu
+from upnormal_ui.components.navbar import render_navbar
 from upnormal_ui.components.playground import generate_interactive_playground_html
 from upnormal_ui.chassis.tables import render_high_density_table
 from upnormal_ui.chassis.inputs import render_custom_select, render_tactile_toggle
@@ -47,6 +51,32 @@ def upnormal_audit_contrast(hex_fg: str, hex_bg: str, target_ratio: float = 7.0)
     """
     try:
         res = auto_correct_contrast(hex_fg, hex_bg, target_ratio=target_ratio)
+        return json.dumps(res, indent=2)
+    except Exception as e:
+        return json.dumps({"status": "ERROR", "message": str(e)})
+
+@server.tool()
+def upnormal_audit_spacing(code: str) -> str:
+    """
+    [SPATIAL RHYTHM AUDIT] Pindai kode terhadap cacat penataan jarak & margin:
+    1. Padding kaku besar di mobile (misal p-8 tanpa breakpoint sm:p-8) yang memakan lebar layar.
+    2. Jarak arbitrer non-skala (misal p-[17px], m-[23px]).
+    3. Magic vertical offset (misal pt-6 artifisial).
+    """
+    try:
+        res = audit_spacing_classes(code)
+        return json.dumps(res, indent=2)
+    except Exception as e:
+        return json.dumps({"status": "ERROR", "message": str(e)})
+
+@server.tool()
+def upnormal_get_spacing_system(density: str = "standard") -> str:
+    """
+    [SPATIAL SCALE SYSTEM] Ambil konfigurasi sistem penataan ruang 4-tingkat (Page, Section, Component, Micro)
+    berbasis skala ritme 4px/8px modular. Pilihan density: 'compact', 'standard', 'comfortable'.
+    """
+    try:
+        res = get_spacing_system(density=density)
         return json.dumps(res, indent=2)
     except Exception as e:
         return json.dumps({"status": "ERROR", "message": str(e)})
@@ -208,6 +238,39 @@ def upnormal_get_chassis(chassis_type: str) -> str:
         return render_tactile_toggle("AKTIFKAN MODE AUTO-POSTING JURNAL", is_active=True)
     else:
         return f"Sasis '{chassis_type}' tidak ditemukan. Pilihan: 'financial_table', 'custom_select', 'tactile_toggle'."
+
+@server.tool()
+def upnormal_render_badge(status: str = "live", custom_label: Optional[str] = None) -> str:
+    """
+    [FUNCTIONAL STATUS BADGE] Hasilkan status badge fungsional dengan suar titik optik.
+    Status: 'live' (hijau berdenyut), 'pending' (amber), 'closed' (abu-abu), 'alert' (merah berdenyut), 'info' (cyan).
+    """
+    try:
+        return render_badge(status=status, custom_label=custom_label)
+    except Exception as e:
+        return f"Error rendering badge: {str(e)}"
+
+@server.tool()
+def upnormal_render_dropdown(items_json: Optional[str] = None) -> str:
+    """
+    [TACTILE ACTION DROPDOWN] Hasilkan popover menu aksi 3-titik dengan transisi spring dan listener penutup luar.
+    """
+    try:
+        items = json.loads(items_json) if items_json else None
+        return render_dropdown_menu(items=items)
+    except Exception as e:
+        return f"Error rendering dropdown: {str(e)}"
+
+@server.tool()
+def upnormal_render_navbar(brand_text: str = "bagas", brand_dot_color: str = "#E8590C") -> str:
+    """
+    [SITE HEADER & NAVIGATION] Hasilkan header navigasi situs berkelas dengan direct text-only typography,
+    animasi denyut titik merek, dan backdrop blur sticky (bebas squircle AI logo).
+    """
+    try:
+        return render_navbar(brand_text=brand_text, brand_dot_color=brand_dot_color)
+    except Exception as e:
+        return f"Error rendering navbar: {str(e)}"
 
 @server.tool()
 def upnormal_generate_playground_html() -> str:
