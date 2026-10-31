@@ -82,10 +82,13 @@ python3 -m upnormal_ui.cli transmute ./components/card.html --archetype neo_brut
 # 3. Generate skala warna perseptual 11-langkah (50-950)
 python3 -m upnormal_ui.cli scale "#06b6d4" --name cyan
 
-# 4. Generate komponen tombol modular (HTML / Blade / React)
+# 4. Generate komponen tombol modular (HTML / Blade / React / Vue / Svelte / Alpine)
 python3 -m upnormal_ui.cli button "SIMPAN TRANSAKSI" --variant neo_brutal --size lg --framework blade
+python3 -m upnormal_ui.cli button "AKSI VUE" --variant obsidian_sleek --framework vue
+python3 -m upnormal_ui.cli button "AKSI SVELTE" --variant neo_brutal --framework svelte
+python3 -m upnormal_ui.cli button "AKSI ALPINE" --variant pill_soft --framework alpine
 
-# 5. Generate seluruh Interactive Component Playground ke HTML
+# 5. Generate seluruh Interactive Component Playground ke HTML (atau buka examples/showcase.html)
 python3 -m upnormal_ui.cli playground -o playground.html
 ```
 
@@ -100,7 +103,7 @@ python3 -m upnormal_ui.cli playground -o playground.html
 | **`upnormal_scan_anti_slop`** | `code` | [DOM-AWARE LINTER] Memindai kode terhadap 9 Dosa AI Slop (BeautifulSoup4 AST linter). |
 | **`upnormal_transmute_ui`** | `code`, `target_archetype`, `accent_color` | [DOM TRANSMUTATION] Merombak struktur DOM template generik menjadi karya seni Upnormal berkelas. |
 | **`upnormal_palette_generator`**| `stage`, `accent` | Hasilkan palet panggung 95% akromatik + 5% aksen tunggal (CSS variables & Tailwind). |
-| **`upnormal_render_button`** | `label`, `variant`, `size`, `framework` | [BUTTON FACTORY] Hasilkan komponen tombol modular untuk HTML, Blade, atau React. |
+| **`upnormal_render_button`** | `label`, `variant`, `size`, `framework` | [BUTTON FACTORY] Hasilkan komponen tombol modular untuk HTML, Blade, React, Vue, Svelte, atau Alpine. |
 | **`upnormal_render_bento_grid`**| `cells_json`, `archetype` | [BENTO FACTORY] Hasilkan komposisi bento grid asimetris berbobot 2:1. |
 | **`upnormal_get_morph_dialog`** | `trigger_label`, `dialog_title`, `dialog_content` | [60 FPS MODAL] Sasis dialog modal in-place morphing tanpa jeda kedip (*CLS = 0*). |
 | **`upnormal_get_archetype`** | `archetype_name`, `component_type` | Hasilkan sasis komponen siap pakai dari 5 arketipe dunia (*swiss_editorial*, *neo_brutalist*, dll). |
