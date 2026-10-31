@@ -19,7 +19,7 @@ def render_custom_select(label: str, options: list) -> str:
     </select>
     <!-- Custom SVG Chevron Indicator -->
     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94a3b8]">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg width="16" height="16" style="width:16px;height:16px;" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
     </div>

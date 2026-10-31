@@ -79,6 +79,18 @@ def generate_interactive_playground_html() -> str:
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }}
+  /* Strict SVG Bounds Reset (Anti-Unconstrained Blowup) */
+  svg {{
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }}
+  svg.w-4, svg[width="16"] {{
+    width: 16px !important;
+    height: 16px !important;
+    max-width: 16px !important;
+    max-height: 16px !important;
+  }}
 </style>
 </head>
 <body class="bg-[#06090e] text-[#f8fafc]">
