@@ -24,7 +24,9 @@ from upnormal_ui.core.spacing import (
     get_spacing_system,
     audit_spacing_classes,
     get_upnormal_creative_spacing_preset,
-    generate_fluid_clamp
+    generate_fluid_clamp,
+    audit_negative_space_architecture,
+    get_negative_space_doctrine
 )
 from upnormal_ui.core.ast_linter import lint_dom_structure
 from upnormal_ui.core.anti_slop import scan_anti_slop
@@ -38,8 +40,20 @@ from upnormal_ui.core.morph import (
 )
 from upnormal_ui.transmute.ast_transmute import transmute_dom_tree
 from upnormal_ui.archetypes.registry import render_archetype_component, list_archetypes
+from upnormal_ui.core.aspect_ratio import (
+    get_aspect_ratio_spec,
+    list_all_aspect_ratios,
+    get_card_fatigue_doctrine,
+    generate_aspect_ratio_css,
+    audit_card_fatigue
+)
 from upnormal_ui.components.button import render_button
-from upnormal_ui.components.card import render_bento_grid
+from upnormal_ui.components.card import (
+    render_bento_grid,
+    render_metric_card,
+    render_horizontal_metric_strip,
+    render_continuous_data_rows
+)
 from upnormal_ui.components.dialog import render_morphing_dialog
 from upnormal_ui.components.badge import render_badge
 from upnormal_ui.components.dropdown import render_dropdown_menu
@@ -77,9 +91,30 @@ def upnormal_audit_spacing(code: str) -> str:
     1. Padding kaku besar di mobile (misal p-8 tanpa breakpoint sm:p-8) yang memakan lebar layar.
     2. Jarak arbitrer non-skala (misal p-[17px], m-[23px]).
     3. Magic vertical offset (misal pt-6 artifisial).
+    4. Undersized button target (< 44px).
     """
     try:
         res = audit_spacing_classes(code)
+        return json.dumps(res, indent=2)
+    except Exception as e:
+        return _error(str(e))
+
+@server.tool()
+def upnormal_audit_negative_space(code: str) -> str:
+    """
+    [ACTIVE NEGATIVE SPACE AUDIT & 'MA' INTERACTION]
+    Pindai kode antarmuka terhadap kegunaan fungsional area kosong (Active Negative Space Architecture):
+    1. CRAMPED_MACRO_SECTION: Seksi utama tercekik (py-2 s/d py-6) tanpa breathing room (minimal py-12 s/d py-24).
+    2. ZERO_LATERAL_BREATHING: Hilangnya padding samping layar ponsel (px-0/px-1), konten menempel bezel.
+    3. Memeriksa kepatuhan terhadap 7 Pilar Kegunaan Aktif Area Kosong Upnormal.
+    """
+    try:
+        audit = audit_negative_space_architecture(code)
+        doctrine = get_negative_space_doctrine()
+        res = {
+            "audit_result": audit,
+            "doctrine_guide": doctrine
+        }
         return json.dumps(res, indent=2)
     except Exception as e:
         return _error(str(e))
@@ -237,6 +272,78 @@ def upnormal_render_bento_grid(cells_json: str, archetype: str = "obsidian") -> 
         return render_bento_grid(data, archetype=archetype)
     except json.JSONDecodeError as e:
         return _error(f"cells_json bukan JSON valid: {e}")
+    except Exception as e:
+        return _error(str(e))
+
+@server.tool()
+def upnormal_get_borderless_chassis(pattern: str = "metric_strip", items_json: Optional[str] = None) -> str:
+    """
+    [DEKARTUNISASI: BORDERLESS SURFACES]
+    Hasilkan komponen antarmuka borderless elegan pengganti 'Card Fatigue' (box soup):
+    - 'metric_strip': Horizontal split strip in-line KPI dengan pembatas hairline (|), hemat 60% vertikal.
+    - 'continuous_rows': Baris interaktif satu kanvas utuh dengan hover state halus ala Linear/Stripe.
+    """
+    try:
+        items = json.loads(items_json) if items_json else None
+        p = pattern.lower().strip()
+        if p in ["metric_strip", "kpi_strip", "strip"]:
+            return render_horizontal_metric_strip(metrics=items)
+        elif p in ["continuous_rows", "rows", "data_surface"]:
+            return render_continuous_data_rows(rows=items)
+        else:
+            return _error(f"Pola borderless '{pattern}' tidak dikenal. Pilihan: 'metric_strip', 'continuous_rows'.")
+    except Exception as e:
+        return _error(str(e))
+
+@server.tool()
+def upnormal_get_aspect_ratio(ratio_key: str = "16:9", object_fit: str = "cover", enable_container_query: bool = True) -> str:
+    """
+    [ASPECT RATIO ARCHITECTURE & ZERO-CLS]
+    Hasilkan aturan CSS dan spesifikasi dari 8 Rasio Visual Baku UI/UX:
+    '1:1', '4:3', '3:2', '16:9', '21:9', '4:5', '9:16', '1.618:1'.
+    Mencegah pergeseran tata letak (Cumulative Layout Shift = 0) saat aset gambar/video dimuat.
+    """
+    try:
+        spec = get_aspect_ratio_spec(ratio_key)
+        css_data = generate_aspect_ratio_css(
+            ratio_key=ratio_key,
+            object_fit=object_fit,
+            enable_container_query=enable_container_query
+        )
+        res = {
+            "specification": spec,
+            "generated_css": css_data
+        }
+        return json.dumps(res, indent=2)
+    except Exception as e:
+        return _error(str(e))
+
+@server.tool()
+def upnormal_list_aspect_ratios() -> str:
+    """
+    Kembalikan daftar lengkap 8 rasio visual baku UI/UX beserta karakter dan penggunaan optimalnya.
+    """
+    try:
+        return json.dumps(list_all_aspect_ratios(), indent=2)
+    except Exception as e:
+        return _error(str(e))
+
+@server.tool()
+def upnormal_audit_card_fatigue(code: str) -> str:
+    """
+    [CARD FATIGUE LINTER & DEKARTUNISASI]
+    Pindai kode terhadap penyakit 'Card Fatigue' (tumpukan kotak/kardus berlebihan):
+    - Mendeteksi pengulangan kartu berlebih (> 4 kartu dengan border/rounded tebal).
+    - Menghubungkan ke doktrin 5 Alternatif Borderless Layouts.
+    """
+    try:
+        audit = audit_card_fatigue(code)
+        doctrine = get_card_fatigue_doctrine()
+        res = {
+            "audit_result": audit,
+            "doctrine": doctrine
+        }
+        return json.dumps(res, indent=2)
     except Exception as e:
         return _error(str(e))
 

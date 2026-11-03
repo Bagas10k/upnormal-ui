@@ -77,3 +77,80 @@ def render_metric_card(title: str, value: str, trend: str = "+12.4%", is_positiv
     <span class="text-[#64748b] font-normal">vs bulan lalu</span>
   </div>
 </div>"""
+
+def render_horizontal_metric_strip(metrics: Optional[List[Dict[str, Any]]] = None) -> str:
+    """
+    [DEKARTUNISASI: HORIZONTAL SPLIT STRIP]
+    Pola borderless pengganti 4 kartu KPI terpisah.
+    Menyusun metrik angka dalam satu baris datar dengan pembatas vertikal hairline (|).
+    Menghemat hingga 60% ruang vertikal layar dibanding card konvensional.
+    """
+    default_metrics = [
+        {"label": "TOTAL OMZET", "value": "Rp 148.500.000", "trend": "+18.2%", "positive": True},
+        {"label": "TRANSAKSI AKTIF", "value": "1.248", "trend": "+6.4%", "positive": True},
+        {"label": "MARGIN BERSIH", "value": "24.6%", "trend": "+1.8%", "positive": True},
+        {"label": "PENDING INVOICE", "value": "12", "trend": "-3.1%", "positive": False}
+    ]
+    items = metrics if metrics is not None else default_metrics
+    
+    parts = []
+    for idx, m in enumerate(items):
+        t_color = "text-[#10b981]" if m.get("positive", True) else "text-[#ef4444]"
+        t_icon = "↑" if m.get("positive", True) else "↓"
+        border_right = "border-r border-white/10" if idx < len(items) - 1 else ""
+        
+        parts.append(f"""    <div class="flex-1 px-5 py-4 {border_right}">
+      <div class="text-[11px] font-bold tracking-wider text-[#94a3b8] font-['JetBrains_Mono',monospace] mb-1">
+        {m['label']}
+      </div>
+      <div class="text-2xl font-black text-[#f8fafc] font-['JetBrains_Mono',monospace] tabular-nums tracking-tight mb-1">
+        {m['value']}
+      </div>
+      <div class="text-xs font-semibold {t_color} font-['JetBrains_Mono',monospace]">
+        <span>{t_icon} {m['trend']}</span>
+      </div>
+    </div>""")
+
+    body = "\n".join(parts)
+    return f"""<!-- UPNORMAL BORDERLESS HORIZONTAL METRIC STRIP (ANTI-CARD FATIGUE) -->
+<div class="w-full bg-[#0d1422] border-y border-[#1e293b] flex flex-col md:flex-row items-stretch justify-between font-['Plus_Jakarta_Sans',sans-serif]">
+{body}
+</div>"""
+
+def render_continuous_data_rows(rows: Optional[List[Dict[str, Any]]] = None) -> str:
+    """
+    [DEKARTUNISASI: CONTINUOUS DATA SURFACE]
+    Baris interaktif satu kanvas utuh (ala Linear / Stripe Dashboard).
+    Menggantikan tumpukan kartu transaksi menjadi baris ber-hover halus tanpa border kotak tebal.
+    """
+    default_rows = [
+        {"id": "TRX-8801", "name": "Distribusi Semen Curah 40T", "party": "PT Mandiri Beton", "amount": "Rp 42.000.000", "status": "SELESAI"},
+        {"id": "TRX-8802", "name": "Baja Tulangan Ulir D16", "party": "CV Sumber Logam", "amount": "Rp 28.500.000", "status": "DIPROSES"},
+        {"id": "TRX-8803", "name": "Bata Ringan AAC 12 Pallet", "party": "PT Graha Surya", "amount": "Rp 14.200.000", "status": "SELESAI"}
+    ]
+    items = rows if rows is not None else default_rows
+    
+    row_html = []
+    for r in items:
+        status_bg = "bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30" if r["status"] == "SELESAI" else "bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/30"
+        row_html.append(f"""  <!-- Row {r['id']} -->
+  <div class="flex items-center justify-between py-3.5 px-4 hover:bg-white/[0.03] transition-colors border-b border-white/[0.06] cursor-pointer group">
+    <div class="flex items-center gap-4">
+      <span class="text-xs font-bold text-[#38bdf8] font-['JetBrains_Mono',monospace]">{r['id']}</span>
+      <div>
+        <div class="text-sm font-bold text-[#f8fafc] group-hover:text-[#38bdf8] transition-colors">{r['name']}</div>
+        <div class="text-xs text-[#64748b]">{r['party']}</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-5">
+      <span class="text-sm font-black text-[#f8fafc] font-['JetBrains_Mono',monospace] tabular-nums">{r['amount']}</span>
+      <span class="text-[10px] font-bold font-['JetBrains_Mono',monospace] px-2.5 py-0.5 rounded border {status_bg}">{r['status']}</span>
+    </div>
+  </div>""")
+
+    body = "\n".join(row_html)
+    return f"""<!-- UPNORMAL CONTINUOUS DATA ROWS (ZERO-CARD SOUP) -->
+<div class="w-full font-['Plus_Jakarta_Sans',sans-serif]">
+{body}
+</div>"""
+

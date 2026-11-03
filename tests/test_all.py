@@ -269,5 +269,60 @@ class TestUpnormalUIEnterprise(unittest.TestCase):
         types = [i["type"] for i in audit["issues"]]
         self.assertIn("UNDERSIZED_INTERACTIVE_TARGET", types)
 
+    def test_aspect_ratio_and_card_fatigue_doctrine(self):
+        from upnormal_ui.core.aspect_ratio import (
+            list_all_aspect_ratios,
+            get_aspect_ratio_spec,
+            generate_aspect_ratio_css,
+            get_card_fatigue_doctrine,
+            audit_card_fatigue
+        )
+        from upnormal_ui.components.card import (
+            render_horizontal_metric_strip,
+            render_continuous_data_rows
+        )
+        # 1. 8 Aspect Ratios Registry
+        ratios = list_all_aspect_ratios()
+        self.assertEqual(ratios["total_ratios"], 8)
+        self.assertIn("16:9", ratios["ratios"])
+        self.assertIn("1:1", ratios["ratios"])
+        self.assertIn("4:5", ratios["ratios"])
+        self.assertIn("1.618:1", ratios["ratios"])
+
+        # 2. CSS Generator Zero-CLS
+        css_data = generate_aspect_ratio_css("16:9")
+        self.assertIn("aspect-ratio: 16 / 9", css_data["css"])
+        self.assertIn("object-fit: cover", css_data["css"])
+        self.assertIn("@container", css_data["css"])
+
+        # 3. Card Fatigue Doctrine & Linter
+        doctrine = get_card_fatigue_doctrine()
+        self.assertIn("when_cards_allowed", doctrine["doctrine"])
+        self.assertIn("when_cards_forbidden", doctrine["doctrine"])
+        self.assertEqual(len(doctrine["doctrine"]["borderless_alternatives"]), 5)
+
+        # 4. Linter catches excessive card soup
+        card_soup = '''
+        <div class="grid grid-cols-4">
+          <div class="rounded-2xl border p-6 shadow">K1</div>
+          <div class="rounded-2xl border p-6 shadow">K2</div>
+          <div class="rounded-2xl border p-6 shadow">K3</div>
+          <div class="rounded-2xl border p-6 shadow">K4</div>
+        </div>
+        '''
+        report = audit_card_fatigue(card_soup)
+        self.assertEqual(report["status"], "CARD_FATIGUE_DETECTED")
+        self.assertFalse(report["compliant"])
+
+        # 5. Borderless Components Test
+        strip = render_horizontal_metric_strip()
+        self.assertIn("border-y", strip)
+        self.assertIn("TOTAL OMZET", strip)
+        self.assertIn("border-r", strip)
+
+        rows = render_continuous_data_rows()
+        self.assertIn("TRX-8801", rows)
+        self.assertIn("hover:bg-white", rows)
+
 if __name__ == "__main__":
     unittest.main()

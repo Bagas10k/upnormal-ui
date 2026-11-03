@@ -63,6 +63,57 @@ ARBITRARY_SPACING_REGEX = re.compile(r"\b(?:p|m|gap|top|bottom|left|right)-\[(\d
 OVERSIZED_MOBILE_PADDING = re.compile(r"\bp-(?:8|10|12|16)\b(?!\s+(?:sm|md|lg):)")
 MAGIC_ALIGNMENT_OFFSET = re.compile(r"\bpt-(?:5|6|7|8)\b(?=.*(?:toggle|switch|checkbox))", re.IGNORECASE)
 UNDERSIZED_BUTTON_TARGET = re.compile(r"<button\b[^>]*\bclass=[\"'][^\"']*\b(?:p-1|py-0\.5|px-1|p-0\.5)\b", re.IGNORECASE)
+CRAMPED_SECTION_PADDING = re.compile(r"<(?:section|main|article)\b[^>]*\bclass=[\"'][^\"']*\b(?:py-1|py-2|py-3|py-4|py-5|py-6)\b(?!\s+(?:sm|md|lg):)", re.IGNORECASE)
+ZERO_LATERAL_BREATHING = re.compile(r"<(?:body|main|div)\b[^>]*\bclass=[\"'][^\"']*\b(?:px-0|px-1)\b(?!\s+(?:sm|md|lg):)", re.IGNORECASE)
+
+# ==============================================================================
+# 7 PILAR KEGUNAAN AKTIF AREA KOSONG (ACTIVE NEGATIVE SPACE & FILOSOFI 'MA' 間)
+# Area kosong bukan sekadar piksel mati/kosong, melainkan elemen fungsional primer.
+# ==============================================================================
+ACTIVE_NEGATIVE_SPACE_PILLARS = [
+    {
+        "pillar": 1,
+        "name": "Gravitasi Visual & Fokus Monolitik (Visual Gravitational Pull)",
+        "function": "Area kosong lapang di sekeliling elemen hero/CTA menciptakan sumur gravitasi visual tanpa garis tepi atau badge berisik.",
+        "rule": "Beri minimal 64px - 112px whitespace di sekitar display headline utama."
+    },
+    {
+        "pillar": 2,
+        "name": "Buffer Kognitif & Kecepatan Pahami (Cognitive Working Memory Buffer)",
+        "function": "Menegakkan Hukum Miller (7 ± 2 chunks) dan Hukum Hick: Ruang kosong bertindak sebagai jeda nafas kognitif, mencegah decision fatigue.",
+        "rule": "Bagi informasi menjadi kluster mandiri dengan margin vertikal antar-blok minimal 32px - 48px."
+    },
+    {
+        "pillar": 3,
+        "name": "Landasan Pacu Ekspansi Morphing Fisik (Physical Morphing Runway)",
+        "function": "Ruang kosong di sekeliling kartu/tombol pemicu berfungsi sebagai landasan pacu spasial saat elemen mengembang in-place (FLIP 60 FPS).",
+        "rule": "Sediakan clearance horizontal & vertikal minimal 24px agar ekspansi kartu tidak menabrak elemen tetangga."
+    },
+    {
+        "pillar": 4,
+        "name": "Zona Selamat Sentuh & Pelindung Pointer (Touch Target Sanctuaries)",
+        "function": "Area kosong di sekitar kontrol sentuh ponsel bertindak sebagai thumb rest zones, mencegah salah sentuh (fat-finger errors).",
+        "rule": "Jarak pemisah antar-tombol aksi minimal 12px - 16px (gap-3 atau gap-4), bukan menempel rapat."
+    },
+    {
+        "pillar": 5,
+        "name": "Panggung Atmosferik Dua Lapis (Two-Layer Atmospheric Canvas Stage)",
+        "function": "Ruang kosong adalah panggung Layer 0 tempat partikel kanvas halus, fluid simulation, atau subtle grain bernapas secara organik.",
+        "rule": "Biarkan 95% kanvas akromatik tetap terbuka agar kanvas WebGPU atau noise halus dapat dinikmati tanpa terhalang tumpukan card."
+    },
+    {
+        "pillar": 6,
+        "name": "Ketegangan Artistik & Irama Asimetris (The Concept of 'Ma' 間)",
+        "function": "Mengadopsi filosofi jeda bermakna Jepang 'Ma' dan Swiss Editorial: Spasi tidak simetris (asymmetrical luxury whitespace).",
+        "rule": "Gunakan perbandingan Golden Ratio (1 : 1.618) pada margin atas vs bawah atau padding kiri vs kanan."
+    },
+    {
+        "pillar": 7,
+        "name": "Mikro-Spasial Tipografi (Typographic Counter-Space & Leading)",
+        "function": "Area kosong mikro di dalam huruf (counter-space) dan antar-baris (leading) menjamin kenyamanan membaca 120 FPS.",
+        "rule": "Headline display ekstrim dikunci rapat (line-height: 0.92 - 0.95), teks paragraf dibuka lega (line-height: 1.65 - 1.75)."
+    }
+]
 
 # ==============================================================================
 # DOKTRIN SPASIAL UPNORMAL KREATIF (CREATIVE EDITORIAL RHYTHM & FLUID CLAMP)
@@ -198,4 +249,56 @@ def audit_spacing_classes(html_or_classes: str) -> Dict[str, Any]:
         "total_issues": len(issues),
         "issues": issues,
         "verdict": "Penataan ruang mematuhi ritme modular 4px/8px dan responsif adaptif." if is_clean else "Terdeteksi ketidakseimbangan spasial. Terapkan rekomendasi ritme Upnormal."
+    }
+
+def get_negative_space_doctrine() -> Dict[str, Any]:
+    """Hasilkan doktrin 7 Pilar Kegunaan Aktif Area Kosong (Active Negative Space & 'Ma')."""
+    return {
+        "status": "ACTIVE_NEGATIVE_SPACE_DOCTRINE_V1",
+        "pillars": ACTIVE_NEGATIVE_SPACE_PILLARS,
+        "philosophy": (
+            "Ruang kosong dalam desain Upnormal adalah entitas aktif berenergi kinetik (konsep 'Ma' 間). "
+            "Ruang kosong mengarahkan fokus mata, menyediakan panggung atmosferik, melindungi kenyamanan gestur sentuh, "
+            "dan menjadi landasan pacu spasial bagi animasi morphing 60 FPS in-place."
+        )
+    }
+
+def audit_negative_space_architecture(html_code: str) -> Dict[str, Any]:
+    """
+    Pindai kode terhadap cacat pemanfaatan area kosong:
+    1. CRAMPED_SECTION: Seksi makro tercekik (py-2 s/d py-6) tanpa breathing room (minimal py-12 s/d py-20).
+    2. ZERO_LATERAL_BREATHING: Hilangnya padding lateral pada layar ponsel (px-0/px-1), konten menabrak bezel.
+    3. SUFFOCATED_INTERACTIVE_TARGET: Tombol terlalu berhimpitan tanpa buffer spasial (gap < 8px).
+    """
+    findings = []
+
+    # 1. Cek cramped macro section
+    cramped = CRAMPED_SECTION_PADDING.findall(html_code)
+    if cramped:
+        findings.append({
+            "type": "CRAMPED_MACRO_SECTION",
+            "severity": "HIGH",
+            "matches": cramped[:3],
+            "description": "Ditemukan seksi utama (<section>, <main>, <article>) dengan padding vertikal terlalu sempit (py-2 s/d py-6), mematikan gravitasi visual konten.",
+            "solution": "Gunakan fluid vertical spacing: 'py-12 sm:py-16 lg:py-24' atau fluid clamp generator."
+        })
+
+    # 2. Cek zero lateral breathing
+    zero_lat = ZERO_LATERAL_BREATHING.findall(html_code)
+    if zero_lat:
+        findings.append({
+            "type": "ZERO_LATERAL_BREATHING",
+            "severity": "HIGH",
+            "matches": zero_lat[:3],
+            "description": "Konten menempel rapat ke bezel layar ponsel (px-0 / px-1), menghilangkan zona perlindungan ibu jari.",
+            "solution": "Terapkan lateral breathing minimal 'px-4 sm:px-6 lg:px-8'."
+        })
+
+    is_compliant = len(findings) == 0
+    return {
+        "status": "EXCELLENT_NEGATIVE_SPACE" if is_compliant else "NEGATIVE_SPACE_DEFICIT",
+        "compliant": is_compliant,
+        "total_findings": len(findings),
+        "findings": findings,
+        "doctrine_summary": "Area kosong memenuhi 7 Pilar Kegunaan Aktif Upnormal." if is_compliant else "Area kosong tercekik. Tingkatkan breathing room dan terapkan filosofi 'Ma' 間."
     }
