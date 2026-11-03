@@ -94,20 +94,27 @@ python3 -m upnormal_ui.cli playground -o playground.html
 
 ---
 
-## 🛠️ Daftar 11 Perkakas MCP (Tool Catalog)
+## 🛠️ Daftar 18 Perkakas MCP (Tool Catalog)
 
 | Nama Tool | Parameter | Deskripsi & Luaran |
 |:---|:---|:---|
 | **`upnormal_audit_contrast`** | `hex_fg`, `hex_bg`, `target_ratio` | Menghitung rasio kontras. Jika gagal (< 7:1), otomatis melakukan perbaikan warna (*auto-correction*) pada kanal Lightness HSL. |
+| **`upnormal_audit_spacing`** | `code` | [SPATIAL RHYTHM AUDIT] Deteksi padding mobile berlebihan, jarak arbitrer non-skala, dan magic offset vertikal. |
+| **`upnormal_get_spacing_system`** | `density` | [SPATIAL SCALE SYSTEM] Token penataan ruang 4-tingkat (Page/Section/Component/Micro); density: 'compact', 'standard', 'comfortable'. |
 | **`upnormal_generate_color_scale`** | `accent_hex`, `name` | Menghasilkan skala warna perseptual 11-langkah (50–950) lengkap dengan warna teks kontras WCAG AAA. |
-| **`upnormal_scan_anti_slop`** | `code` | [DOM-AWARE LINTER] Memindai kode terhadap 9 Dosa AI Slop (BeautifulSoup4 AST linter). |
+| **`upnormal_scan_anti_slop`** | `code`, `mode` | [ANTI-SLOP LINTER] Memindai kode terhadap 9 Dosa AI Slop. Mode: 'dom' (AST BeautifulSoup), 'regex' (pola cepat), 'all' (gabungan konservatif). |
 | **`upnormal_transmute_ui`** | `code`, `target_archetype`, `accent_color` | [DOM TRANSMUTATION] Merombak struktur DOM template generik menjadi karya seni Upnormal berkelas. |
 | **`upnormal_palette_generator`**| `stage`, `accent` | Hasilkan palet panggung 95% akromatik + 5% aksen tunggal (CSS variables & Tailwind). |
-| **`upnormal_render_button`** | `label`, `variant`, `size`, `framework` | [BUTTON FACTORY] Hasilkan komponen tombol modular untuk HTML, Blade, React, Vue, Svelte, atau Alpine. |
-| **`upnormal_render_bento_grid`**| `cells_json`, `archetype` | [BENTO FACTORY] Hasilkan komposisi bento grid asimetris berbobot 2:1. |
+| **`upnormal_render_button`** | `label`, `variant`, `size`, `is_accent`, `is_full_width`, `framework` | [BUTTON FACTORY] Hasilkan komponen tombol modular untuk HTML, Blade, React, Vue, Svelte, atau Alpine. |
+| **`upnormal_render_bento_grid`**| `cells_json`, `archetype` | [BENTO FACTORY] Hasilkan komposisi bento grid asimetris berbobot 2:1, dengan validasi input yang jelas. |
 | **`upnormal_get_morph_dialog`** | `trigger_label`, `dialog_title`, `dialog_content` | [60 FPS MODAL] Sasis dialog modal in-place morphing tanpa jeda kedip (*CLS = 0*). |
-| **`upnormal_get_archetype`** | `archetype_name`, `component_type` | Hasilkan sasis komponen siap pakai dari 5 arketipe dunia (*swiss_editorial*, *neo_brutalist*, dll). |
-| **`upnormal_get_chassis`** | `chassis_type` | Ambil sasis spesifik: tabel kasir padat (*financial_table*), custom select, atau toggle switch. |
+| **`upnormal_get_archetype`** | `archetype_name`, `component_type` | Render komponen ('hero', 'card', 'panel', 'button', 'filter') atau spesifikasi desain ('spec') dari 5 arketipe dunia. |
+| **`upnormal_list_archetypes`** | *none* | Daftar seluruh arketipe beserta tipe komponen yang valid untuk masing-masing. |
+| **`upnormal_get_chassis`** | `chassis_type`, `title`, `items_json`, `label`, `is_active` | Ambil sasis spesifik: tabel kasir padat (*financial_table*), custom select, atau toggle switch — semua dengan data yang dapat dikustomisasi. |
+| **`upnormal_render_badge`** | `status`, `custom_label` | [STATUS BADGE] Badge fungsional dengan suar titik optik: 'live', 'pending', 'closed', 'alert', 'info'. |
+| **`upnormal_render_dropdown`** | `items_json` | [ACTION DROPDOWN] Popover menu aksi 3-titik dengan transisi spring dan listener penutup luar. |
+| **`upnormal_render_navbar`** | `brand_text`, `brand_dot_color` | [SITE HEADER] Header navigasi dengan tipografi text-only, titik merek berdenyut, dan backdrop blur sticky. |
+| **`upnormal_get_morph_assets`** | *none* | Boilerplate CSS & JavaScript In-Place Morphing (GSAP FLIP + WAAPI, spring cubic-bezier) siap pakai ulang. |
 | **`upnormal_generate_playground_html`** | *none* | Hasilkan dokumen HTML Interactive Playground lengkap untuk pengujian visual di browser. |
 
 ---
@@ -122,9 +129,9 @@ python3 tests/test_all.py
 
 Output:
 ```text
-......
+............
 ----------------------------------------------------------------------
-Ran 6 tests in 0.014s
+Ran 12 tests in 0.3s
 
 OK
 ```

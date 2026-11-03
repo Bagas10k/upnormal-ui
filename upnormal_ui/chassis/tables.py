@@ -5,8 +5,55 @@ Sasis Tabel Kasir & Finansial Berkepadatan Tinggi (High-Density Data Surface).
 Angka tabular murni (tabular-nums), sticky header, zebra striping halus, dan kontras tinggi.
 """
 
-def render_high_density_table(title: str = "JURNAL TRANSAKSI KASIR") -> str:
-    """Hasilkan tabel data padat siap pakai untuk transaksi kasir/akuntansi (Tailwind CSS)."""
+from typing import Dict, List, Optional
+
+# Warna status yang sudah terverifikasi kontrasnya terhadap latar gelap.
+STATUS_COLORS = {
+    "LUNAS": "#10b981",
+    "PAID": "#10b981",
+    "PENDING": "#f59e0b",
+    "BATAL": "#ef4444",
+    "VOID": "#ef4444",
+    "REFUND": "#38bdf8",
+}
+
+_DEFAULT_ROWS: List[Dict[str, str]] = [
+    {"time": "01:45:12", "invoice": "INV-2026-0891", "item": "Semen Portland Composite 50kg", "qty": "120", "total": "7.800.000", "status": "LUNAS"},
+    {"time": "01:42:04", "invoice": "INV-2026-0890", "item": "Besi Beton Ulir 12mm x 12m", "qty": "45", "total": "5.175.000", "status": "LUNAS"},
+    {"time": "01:38:50", "invoice": "INV-2026-0889", "item": "Cat Tembok Eksterior 20L", "qty": "4", "total": "3.200.000", "status": "PENDING"},
+]
+
+
+def render_high_density_table(
+    title: str = "JURNAL TRANSAKSI KASIR",
+    rows: Optional[List[Dict[str, str]]] = None,
+) -> str:
+    """
+    Hasilkan tabel data padat siap pakai untuk transaksi kasir/akuntansi (Tailwind CSS).
+
+    rows: list of dict dengan kunci: time, invoice, item, qty, total, status.
+    Jika tidak diberikan, contoh data bawaan yang dipakai.
+    """
+    data = rows if rows else _DEFAULT_ROWS
+    if not isinstance(data, list) or not all(isinstance(r, dict) for r in data):
+        raise ValueError("rows harus berupa list of dict dengan kunci: time, invoice, item, qty, total, status.")
+
+    body_rows = []
+    for i, r in enumerate(data):
+        status = str(r.get("status", "LUNAS")).upper()
+        color = STATUS_COLORS.get(status, "#38bdf8")
+        zebra = ' bg-[#090e17]/40' if i % 2 == 1 else ''
+        body_rows.append(f"""        <tr class="hover:bg-[#162032] transition-colors{zebra}">
+          <td class="py-2.5 px-4 tabular-nums text-[#94a3b8]">{r.get('time', '--:--:--')}</td>
+          <td class="py-2.5 px-4 font-bold text-[#38bdf8]">{r.get('invoice', '-')}</td>
+          <td class="py-2.5 px-4 font-semibold text-[#f8fafc]">{r.get('item', '-')}</td>
+          <td class="py-2.5 px-4 tabular-nums text-center font-bold">{r.get('qty', '0')}</td>
+          <td class="py-2.5 px-4 tabular-nums text-right font-bold" style="color: {color}">{r.get('total', '0')}</td>
+          <td class="py-2.5 px-4 text-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold border" style="background: {color}1a; color: {color}; border-color: {color}4d">{status}</span>
+          </td>
+        </tr>""")
+
     return f"""<!-- UPNORMAL CHASSIS: High-Density Financial Data Table -->
 <div class="bg-[#0d1422] border border-[#1e293b] rounded-xl overflow-hidden font-['Plus_Jakarta_Sans',sans-serif] shadow-2xl">
   <!-- Table Control Header -->
@@ -36,36 +83,7 @@ def render_high_density_table(title: str = "JURNAL TRANSAKSI KASIR") -> str:
         </tr>
       </thead>
       <tbody class="divide-y divide-[#1e293b]/60 text-[#e2e8f0]">
-        <tr class="hover:bg-[#162032] transition-colors">
-          <td class="py-2.5 px-4 tabular-nums text-[#94a3b8]">01:45:12</td>
-          <td class="py-2.5 px-4 font-bold text-[#38bdf8]">INV-2026-0891</td>
-          <td class="py-2.5 px-4 font-semibold text-[#f8fafc]">Semen Portland Composite 50kg</td>
-          <td class="py-2.5 px-4 tabular-nums text-center font-bold">120</td>
-          <td class="py-2.5 px-4 tabular-nums text-right font-bold text-[#10b981]">7.800.000</td>
-          <td class="py-2.5 px-4 text-center">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30">LUNAS</span>
-          </td>
-        </tr>
-        <tr class="hover:bg-[#162032] transition-colors bg-[#090e17]/40">
-          <td class="py-2.5 px-4 tabular-nums text-[#94a3b8]">01:42:04</td>
-          <td class="py-2.5 px-4 font-bold text-[#38bdf8]">INV-2026-0890</td>
-          <td class="py-2.5 px-4 font-semibold text-[#f8fafc]">Besi Beton Ulir 12mm x 12m</td>
-          <td class="py-2.5 px-4 tabular-nums text-center font-bold">45</td>
-          <td class="py-2.5 px-4 tabular-nums text-right font-bold text-[#10b981]">5.175.000</td>
-          <td class="py-2.5 px-4 text-center">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30">LUNAS</span>
-          </td>
-        </tr>
-        <tr class="hover:bg-[#162032] transition-colors">
-          <td class="py-2.5 px-4 tabular-nums text-[#94a3b8]">01:38:50</td>
-          <td class="py-2.5 px-4 font-bold text-[#38bdf8]">INV-2026-0889</td>
-          <td class="py-2.5 px-4 font-semibold text-[#f8fafc]">Cat Tembok Eksterior 20L</td>
-          <td class="py-2.5 px-4 tabular-nums text-center font-bold">4</td>
-          <td class="py-2.5 px-4 tabular-nums text-right font-bold text-[#f59e0b]">3.200.000</td>
-          <td class="py-2.5 px-4 text-center">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30">PENDING</span>
-          </td>
-        </tr>
+{chr(10).join(body_rows)}
       </tbody>
     </table>
   </div>

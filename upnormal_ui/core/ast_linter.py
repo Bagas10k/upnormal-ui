@@ -10,7 +10,14 @@ import re
 from typing import Dict, List, Any
 from bs4 import BeautifulSoup, Tag
 
-EMOJI_REGEX = re.compile(r"[\U00010000-\U0010ffff]|[\u2600-\u27ff]|[\u2300-\u23ff]", re.UNICODE)
+# Karakter U+2794 (➔) sengaja dikecualikan: itu panah tipografis CTA resmi
+# Upnormal, bukan emoji. Rentang \u2600-\u2793 & \u2795-\u27ff mencakup
+# simbol/dingbat lain (termasuk 🚀-kelas di plane BMP), plus seluruh
+# Supplementary Symbols & Pictographs (emoji nyata).
+EMOJI_REGEX = re.compile(
+    r"[\U00010000-\U0010ffff]|[\u2300-\u23ff]|[\u2600-\u2793\u2795-\u27ff]",
+    re.UNICODE,
+)
 GRADIENT_SLOP_REGEX = re.compile(r"from-purple-\d+00.*to-cyan-\d+00|linear-gradient\([^)]*purple[^)]*cyan[^)]*\)", re.IGNORECASE)
 SHADOW_SLOP_REGEX = re.compile(r"\bshadow-(?:2xl|xl)\b|box-shadow:[^;]*0\s+25px\s+50px", re.IGNORECASE)
 

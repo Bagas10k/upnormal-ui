@@ -10,6 +10,7 @@ import argparse
 import json
 import asyncio
 from upnormal_ui.core.ast_linter import lint_dom_structure
+from upnormal_ui.core.anti_slop import scan_anti_slop
 from upnormal_ui.transmute.ast_transmute import transmute_dom_tree
 from upnormal_ui.core.color_scale import generate_11_step_scale
 from upnormal_ui.core.palette import generate_upnormal_palette
@@ -30,6 +31,8 @@ def main():
     # Command: audit (DOM-aware linter)
     audit_parser = subparsers.add_parser("audit", help="Pindai file HTML/Blade terhadap 9 Dosa AI Slop (DOM AST)")
     audit_parser.add_argument("file", help="Path ke berkas yang ingin diaudit")
+    audit_parser.add_argument("--mode", default="dom", choices=["dom", "regex", "all"],
+                              help="dom = AST BeautifulSoup, regex = pola cepat, all = gabungan")
 
     # Command: transmute (DOM-aware refactoring)
     transmute_parser = subparsers.add_parser("transmute", help="Rombak file UI slop menjadi kode Upnormal berkelas")
@@ -67,7 +70,9 @@ def main():
     elif args.command == "audit":
         with open(args.file, "r", encoding="utf-8") as f:
             content = f.read()
-        res = lint_dom_structure(content)
+        res = (lint_dom_structure(content) if args.mode == "dom"
+               else scan_anti_slop(content) if args.mode == "regex"
+               else {**lint_dom_structure(content), "regex_report": scan_anti_slop(content)})
         print(json.dumps(res, indent=2))
     elif args.command == "transmute":
         with open(args.file, "r", encoding="utf-8") as f:

@@ -13,8 +13,12 @@ from upnormal_ui.core.contrast import calculate_contrast_ratio, auto_correct_con
 from upnormal_ui.core.color_scale import generate_11_step_scale
 from upnormal_ui.core.spacing import get_spacing_system, audit_spacing_classes
 from upnormal_ui.core.ast_linter import lint_dom_structure
+from upnormal_ui.core.anti_slop import scan_anti_slop
 from upnormal_ui.core.palette import generate_upnormal_palette
 from upnormal_ui.transmute.ast_transmute import transmute_dom_tree
+from upnormal_ui.archetypes.registry import render_archetype_component
+from upnormal_ui.chassis.tables import render_high_density_table
+from upnormal_ui.chassis.inputs import render_custom_select, render_tactile_toggle
 from upnormal_ui.components.button import render_button
 from upnormal_ui.components.card import render_bento_grid, render_metric_card
 from upnormal_ui.components.dialog import render_morphing_dialog
@@ -171,6 +175,99 @@ class TestUpnormalUIEnterprise(unittest.TestCase):
         self.assertIn("UPNORMAL UI PLAYGROUND", playground)
         self.assertIn("MODULAR BUTTON SHOWCASE", playground)
         self.assertIn("ASYMMETRIC BENTO GRID", playground)
+
+    def test_cta_arrow_not_flagged_as_emoji(self):
+        # Typographic CTA arrow must not trigger the emoji rule
+        clean = lint_dom_structure('<button class="btn">LANJUT \u2794</button>')
+        rule_ids = [v["rule_id"] for v in clean["violations"]]
+        self.assertNotIn("DOM_03_EMOJI_IN_INTERACTIVE_UI", rule_ids)
+
+        # Real emoji must still be flagged
+        emoji = lint_dom_structure('<button class="btn">LANJUT \U0001F680</button>')
+        rule_ids = [v["rule_id"] for v in emoji["violations"]]
+        self.assertIn("DOM_03_EMOJI_IN_INTERACTIVE_UI", rule_ids)
+
+    def test_regex_linter_and_combined_mode(self):
+        rainbow = '<h1 class="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500">Title</h1>'
+        regex_report = scan_anti_slop(rainbow)
+        rule_ids = [v["rule_id"] for v in regex_report["violations"]]
+        self.assertIn("SLOP_05_RAINBOW_TEXT_GRADIENT", rule_ids)
+
+    def test_archetype_registry(self):
+        spec = render_archetype_component("swiss_editorial", "spec")
+        self.assertIn("swiss_editorial", spec)
+        hero = render_archetype_component("swiss_editorial", "hero")
+        self.assertIn("<", hero)
+        with self.assertRaises(ValueError):
+            render_archetype_component("nonexistent", "hero")
+        with self.assertRaises(ValueError):
+            render_archetype_component("swiss_editorial", "bogus_type")
+
+    def test_chassis_customization(self):
+        table = render_high_density_table(title="CUSTOM TITLE")
+        self.assertIn("CUSTOM TITLE", table)
+        table2 = render_high_density_table(rows=[{"time": "10:00:00", "invoice": "INV-1", "item": "Widget", "qty": "2", "total": "100", "status": "PENDING"}])
+        self.assertIn("INV-1", table2)
+        self.assertIn("PENDING", table2)
+        select = render_custom_select("MY LABEL", ["A", "B"])
+        self.assertIn("MY LABEL", select)
+        toggle = render_tactile_toggle("MY TOGGLE", is_active=False)
+        self.assertIn("MY TOGGLE", toggle)
+
+    def test_spring_physics_and_morph_engine_8points(self):
+        from upnormal_ui.core.morph import (
+            calculate_spring_position,
+            get_spring_trajectory,
+            get_morph_engine_spec,
+            MORPH_8_POINTS,
+            SPRING_PHYSICS_PROFILES
+        )
+        # 1. 8 Points Completeness
+        self.assertEqual(len(MORPH_8_POINTS), 8)
+        spec = get_morph_engine_spec()
+        self.assertEqual(spec["version"], "2.0.0")
+        self.assertEqual(len(spec["target_points"]), 8)
+
+        # 2. Physics profiles
+        self.assertIn("tactile_smooth", SPRING_PHYSICS_PROFILES)
+        self.assertIn("playful_bounce", SPRING_PHYSICS_PROFILES)
+        self.assertIn("viscous_liquid", SPRING_PHYSICS_PROFILES)
+        self.assertIn("critically_damped", SPRING_PHYSICS_PROFILES)
+
+        # 3. Analytic Spring Math Calculation
+        pos_start = calculate_spring_position(0.0)
+        self.assertEqual(pos_start, 0.0)
+        pos_end = calculate_spring_position(1.5, damping_ratio=0.88, omega_0=18.0)
+        self.assertAlmostEqual(pos_end, 1.0, places=2)
+
+        # 4. Trajectory Generation
+        traj = get_spring_trajectory("tactile_smooth", samples=30)
+        self.assertEqual(len(traj), 31)
+        self.assertEqual(traj[0]["position"], 0.0)
+        self.assertTrue(all(0.0 <= p["position"] <= 1.2 for p in traj))
+
+    def test_creative_spacing_and_fluid_clamp(self):
+        from upnormal_ui.core.spacing import (
+            generate_fluid_clamp,
+            get_upnormal_creative_spacing_preset,
+            audit_spacing_classes
+        )
+        # 1. Fluid Clamp Generator
+        clamp_css = generate_fluid_clamp(16, 48)
+        self.assertTrue(clamp_css.startswith("clamp(1.0rem,"))
+        self.assertTrue(clamp_css.endswith("3.0rem)"))
+
+        # 2. Creative Spacing Preset
+        preset = get_upnormal_creative_spacing_preset()
+        self.assertEqual(preset["status"], "UPNORMAL_CREATIVE_SPACING_V2")
+        self.assertIn("golden_editorial", preset["ratios"])
+        self.assertIn("section_padding_y", preset["fluid_tokens"])
+
+        # 3. Touch target linter (< 44px)
+        bad_btn = '<button class="bg-red-500 text-white p-1">X</button>'
+        audit = audit_spacing_classes(bad_btn)
+        types = [i["type"] for i in audit["issues"]]
+        self.assertIn("UNDERSIZED_INTERACTIVE_TARGET", types)
 
 if __name__ == "__main__":
     unittest.main()

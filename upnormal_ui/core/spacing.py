@@ -62,6 +62,56 @@ DENSITY_PRESETS = {
 ARBITRARY_SPACING_REGEX = re.compile(r"\b(?:p|m|gap|top|bottom|left|right)-\[(\d+)px\]")
 OVERSIZED_MOBILE_PADDING = re.compile(r"\bp-(?:8|10|12|16)\b(?!\s+(?:sm|md|lg):)")
 MAGIC_ALIGNMENT_OFFSET = re.compile(r"\bpt-(?:5|6|7|8)\b(?=.*(?:toggle|switch|checkbox))", re.IGNORECASE)
+UNDERSIZED_BUTTON_TARGET = re.compile(r"<button\b[^>]*\bclass=[\"'][^\"']*\b(?:p-1|py-0\.5|px-1|p-0\.5)\b", re.IGNORECASE)
+
+# ==============================================================================
+# DOKTRIN SPASIAL UPNORMAL KREATIF (CREATIVE EDITORIAL RHYTHM & FLUID CLAMP)
+# ==============================================================================
+CREATIVE_SPACING_RATIOS = {
+    "golden_editorial": {"ratio": 1.618, "description": "Pemisahan asimetris berkelas Awwwards/Godly (konten vs whitespace)"},
+    "hierarchical_dominance": {"ratio": 2.0, "description": "Bobot ganda 2:1 untuk Bento Grid asimetris (hero cell vs support cell)"},
+    "dramatic_contrast": {"ratio": 3.0, "description": "Panggung akromatik megah (hero padding 96px vs card internal 32px)"}
+}
+
+def generate_fluid_clamp(min_px: int, max_px: int, min_vw: int = 390, max_vw: int = 1280) -> str:
+    """
+    Hitung nilai CSS clamp() matematis linier antara min_px (pada min_vw) dan max_px (pada max_vw).
+    Formula: clamp(MIN, SLOPE * 100vw + INTERCEPT, MAX)
+    Menghasilkan responsivitas fluida murni tanpa jeda breakpoint yang kaku.
+    """
+    slope = (max_px - min_px) / (max_vw - min_vw)
+    intercept = min_px - slope * min_vw
+
+    min_rem = round(min_px / 16.0, 4)
+    max_rem = round(max_px / 16.0, 4)
+    slope_vw = round(slope * 100.0, 4)
+    intercept_rem = round(intercept / 16.0, 4)
+
+    sign = "+" if intercept_rem >= 0 else "-"
+    abs_intercept = abs(intercept_rem)
+
+    return f"clamp({min_rem}rem, {slope_vw}vw {sign} {abs_intercept}rem, {max_rem}rem)"
+
+def get_upnormal_creative_spacing_preset() -> Dict[str, Any]:
+    """
+    Hasilkan token penataan ruang kreatif Upnormal berjiwa seni (fluid clamp & asymmetric balance).
+    """
+    return {
+        "status": "UPNORMAL_CREATIVE_SPACING_V2",
+        "ratios": CREATIVE_SPACING_RATIOS,
+        "fluid_tokens": {
+            "section_padding_y": generate_fluid_clamp(48, 112),  # 48px di mobile -> 112px di desktop
+            "page_padding_x": generate_fluid_clamp(16, 48),       # 16px di mobile -> 48px di desktop
+            "card_padding": generate_fluid_clamp(20, 36),         # 20px di mobile -> 36px di desktop
+            "hero_headline_gap": generate_fluid_clamp(24, 48),    # 24px di mobile -> 48px di desktop
+        },
+        "invariants": [
+            "Touch target minimum 44px x 44px (W3C AAA) untuk tombol dan elemen interaktif.",
+            "Bottom clearance: padding-bottom wajib menyisakan ruang untuk floating dock + env(safe-area-inset-bottom).",
+            "Optical hanging punctuation & display offset: gunakan negative margin halus (misal -ml-1) pada huruf besar display awal.",
+            "Asymmetric editorial rhythm: jangan buat padding sekeliling simetris membosankan (gunakan rasio Golden 1:1.618)."
+        ]
+    }
 
 def get_spacing_system(density: str = "standard") -> Dict[str, Any]:
     """Hasilkan konfigurasi sistem penataan ruang (spacing tokens) siap pakai."""
@@ -129,6 +179,17 @@ def audit_spacing_classes(html_or_classes: str) -> Dict[str, Any]:
             "matches": magic[:3],
             "description": "Ditemukan pt-6 atau offset vertikal artifisial untuk menyamakan tinggi kontrol form.",
             "solution": "Gunakan flexbox container dengan 'items-center' atau grid alignment yang seimbang secara struktural."
+        })
+
+    # 4. Cek undersized click targets on buttons (< 44px)
+    undersized_btns = UNDERSIZED_BUTTON_TARGET.findall(html_or_classes)
+    if undersized_btns:
+        issues.append({
+            "type": "UNDERSIZED_INTERACTIVE_TARGET",
+            "severity": "MEDIUM",
+            "matches": undersized_btns[:3],
+            "description": "Ditemukan tombol interaktif dengan padding terlalu kecil (p-1/py-0.5) tanpa batas min-w/min-h, melanggar standar touch target WCAG AAA 44x44px.",
+            "solution": "Terapkan padding minimum 'py-2.5 px-5' atau pastikan elemen memiliki tinggi/lebar minimal 44px ('min-h-[44px] min-w-[44px]')."
         })
 
     is_clean = len(issues) == 0
